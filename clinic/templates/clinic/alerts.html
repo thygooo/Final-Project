@@ -1,0 +1,98 @@
+{% extends 'clinic/base.html' %}
+{% load tz %}  <!-- Add this line to load timezone filters -->
+
+{% block title %}Inventory Alerts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4"><i class="bi bi-exclamation-triangle"></i> Inventory Alerts</h2>
+
+    <div class="row">
+        <!-- Low Stock Column -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-danger h-100">
+                <div class="card-header bg-danger text-white">
+                    <h4><i class="bi bi-box-seam"></i> Low Stock Medicines</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Category</th>
+                                    <th>Current Stock</th>
+                                    <th>Reorder Level</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medicine in low_stock %}
+                                <tr>
+                                    <td>{{ medicine.name }}</td>
+                                    <td>{{ medicine.category.name }}</td>
+                                    <td class="text-danger fw-bold">{{ medicine.quantity }}</td>
+                                    <td>{{ medicine.reorder_level }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No low stock medicines</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Near Expiry Column -->
+        <div class="col-md-6 mb-4">
+            <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark">
+                    <h4><i class="bi bi-calendar-x"></i> Near Expiry Medicines</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Shelf</th>
+                                    <th>Medicine</th>
+                                    <th>Category</th>
+                                    <th>Expiry Date</th>
+                                    <th>Days Left</th>
+                                    <th>Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for medicine in near_expiry %}
+                                <tr>
+                                    <td>{{ medicine.shelf_location }}</td>
+                                    <td>{{ medicine.name }}</td>
+                                    <td>{{ medicine.category.name }}</td>
+                                    <td>{{ medicine.expiry_date|date:"Y-m-d" }}</td>
+                                    <td class="text-warning fw-bold">
+                                        {{ medicine.expiry_date|timeuntil }}  <!-- Changed this line -->
+                                    </td>
+                                    <td>{{ medicine.quantity }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No medicines nearing expiry</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <a href="{% url 'inventory' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Inventory
+        </a>
+    </div>
+</div>
+{% endblock %}

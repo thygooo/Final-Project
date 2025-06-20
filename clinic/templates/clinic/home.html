@@ -1,0 +1,82 @@
+{% extends 'clinic/base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="hero-section position-relative">
+    <div class="hero-image" style="background-image: url('{% static 'images/clinic-bg.jpg' %}');"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content text-white text-center position-relative">
+        <h1 class="display-4 fw-bold">Welcome to Norsu BSC Clinic</h1>
+        <p class="lead">Your health is our priority</p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'inventory' %}" class="btn btn-light btn-lg mt-3">
+                <i class="bi bi-capsule"></i> Access Medicine Inventory
+            </a>
+        {% else %}
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'login' %}" class="btn btn-light btn-lg mt-3">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-light btn-lg mt-3">
+                    <i class="bi bi-person-plus"></i> Sign Up
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card border-success mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3><i class="bi bi-info-circle"></i> About Our Clinic</h3>
+                </div>
+                <div class="card-body">
+                    <p>The Norsu BSC Clinic is dedicated to providing quality healthcare services to all students and staff of the university. Our team of qualified healthcare professionals is committed to ensuring your well-being throughout your academic journey.</p>
+                    <p>We offer a range of services including primary healthcare, emergency care, health education, and medication dispensing.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-success mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3><i class="bi bi-bullseye"></i> Our Mission</h3>
+                </div>
+                <div class="card-body">
+                    <p>To promote and maintain the health and well-being of the university community through:</p>
+                    <ul>
+                        <li>Quality healthcare services</li>
+                        <li>Health education and promotion</li>
+                        <li>Preventive care initiatives</li>
+                        <li>Timely medical interventions</li>
+                        <li>A supportive and caring environment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-success">
+        <div class="card-header bg-success text-white">
+            <h3><i class="bi bi-clock-history"></i> Operating Hours</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>Regular Days</h5>
+                    <p>Monday - Friday: 8:00 AM - 5:00 PM</p>
+                    <p>Saturday: 9:00 AM - 1:00 PM</p>
+                </div>
+                <div class="col-md-6">
+                    <h5>Emergency Services</h5>
+                    <p>Available 24/7 for urgent cases</p>
+                    <p>Emergency Hotline: (123) 456-7890</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

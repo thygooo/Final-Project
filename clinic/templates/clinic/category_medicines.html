@@ -1,0 +1,91 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}{{ category.name }} Medicines{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-capsule"></i> {{ category.name }} Medicines</h2>
+    {% if user.is_staff %}
+    <a href="{% url 'add_medicine' %}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Add Medicine
+    </a>
+    {% endif %}
+</div>
+
+<div class="card mb-4">
+    <div class="card-header bg-success text-white">
+        <h4><i class="bi bi-list-ul"></i> Medicine List</h4>
+    </div>
+    <div class="mb-3">
+    <form method="get" class="row g-2">
+        <div class="col-md-4">
+            <select name="shelf" class="form-select">
+                <option value="">All Shelves</option>
+                <option value="Shelf 1" {% if shelf_filter == 'Shelf 1' %}selected{% endif %}>Shelf 1</option>
+                <option value="Shelf 2" {% if shelf_filter == 'Shelf 2' %}selected{% endif %}>Shelf 2</option>
+                <option value="Shelf 3" {% if shelf_filter == 'Shelf 3' %}selected{% endif %}>Shelf 3</option>
+                <option value="Shelf 4" {% if shelf_filter == 'Shelf 4' %}selected{% endif %}>Shelf 4</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success">Filter</button>
+        </div>
+    </form>
+</div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Shelf Location</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Quantity</th>
+                        <th>Expiry Date</th>
+                        {% if user.is_staff %}
+                        <th>Actions</th>
+                        {% else %}
+                        <th>Request</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for medicine in medicines %}
+                    <tr class="{% if medicine.is_low_stock %}table-warning{% endif %} {% if medicine.is_near_expiry %}table-danger{% endif %}">
+                        <td>{{ medicine.shelf_location }}</td>
+                        <td>{{ medicine.name }}</td>
+                        <td>{{ medicine.description|default:"-" }}</td>
+                        <td>{{ medicine.quantity }}</td>
+                        <td>{{ medicine.expiry_date|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if user.is_staff %}
+                            <div class="btn-group btn-group-sm">
+                                <a href="{% url 'edit_medicine' medicine.id %}" class="btn btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'delete_medicine' medicine.id %}" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                            {% else %}
+                            <a href="{% url 'request_medicine' %}?medicine_id={{ medicine.id }}" class="btn btn-sm btn-success">
+                                <i class="bi bi-cart-plus"></i> Request
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if user.is_staff %}5{% else %}5{% endif %}" class="text-center text-muted">No medicines available in this category</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<a href="{% url 'inventory' %}" class="btn btn-outline-secondary">
+    <i class="bi bi-arrow-left"></i> Back to Inventory
+</a>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends 'clinic/base.html' %}
+
+{% block title %}Medicine Inventory{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-capsule"></i> Medicine Inventory</h2>
+    {% if user.is_staff %}
+    <div>
+        <a href="{% url 'add_category' %}" class="btn btn-success me-2">
+            <i class="bi bi-plus-circle"></i> Add Category
+        </a>
+        <a href="{% url 'add_medicine' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add Medicine
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" action="{% url 'inventory' %}">
+            <div class="input-group">
+                <input type="text" class="form-control" name="q" placeholder="Search medicines..."
+                       value="{{ request.GET.q }}">
+                <button class="btn btn-success" type="submit">
+                    <i class="bi bi-search"></i> Search
+                </button>
+                {% if request.GET.q %}
+                <a href="{% url 'inventory' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> Clear
+                </a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if search_query %}
+<div class="card mb-4">
+    <div class="card-header bg-info text-white">
+        <h4><i class="bi bi-search"></i> Search Results for "{{ search_query }}"</h4>
+    </div>
+    <div class="card-body">
+        {% if medicines %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Category</th>
+                        <th>Shelf</th>
+                        <th>Quantity</th>
+                        <th>Expiry Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for medicine in medicines %}
+                    <tr class="{% if medicine.quantity <= medicine.reorder_level %}table-warning{% endif %}">
+                        <td>{{ medicine.name }}</td>
+                        <td>{{ medicine.category.name }}</td>
+                        <td>{{ medicine.shelf_location }}</td>
+                        <td class="{% if medicine.quantity <= medicine.reorder_level %}text-danger fw-bold{% endif %}">
+                            {{ medicine.quantity }}
+                        </td>
+                        <td>{{ medicine.expiry_date|date:"Y-m-d" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">No medicines found matching your search.</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h4><i class="bi bi-list-ul"></i> Medicine Categories</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for category in categories %}
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-success">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ category.name }}</h5>
+                                <p class="card-text text-muted">{{ category.description|default:"No description" }}</p>
+                                <a href="{% url 'category_medicines' category.id %}" class="btn btn-outline-success">
+                                    View Medicines <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <p class="text-muted">No medicine categories available.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        {% if user.is_staff %}
+        <div class="card mb-4 border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4><i class="bi bi-exclamation-triangle"></i> Alerts</h4>
+            </div>
+            <div class="card-body">
+                <h5 class="text-danger"><i class="bi bi-box-seam"></i> Low Stock</h5>
+                <ul class="list-group mb-3">
+                    {% for medicine in low_stock %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ medicine.name }}</strong>
+                                <div class="text-muted small">
+                                    {{ medicine.category.name }} | Shelf: {{ medicine.shelf_location }}
+                                </div>
+                            </div>
+                            <span class="badge bg-danger rounded-pill">{{ medicine.quantity }}</span>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">No low stock items</li>
+                    {% endfor %}
+                </ul>
+
+                <h5 class="text-warning"><i class="bi bi-calendar-x"></i> Near Expiry</h5>
+                <ul class="list-group">
+                    {% for medicine in near_expiry %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <strong>{{ medicine.name }}</strong>
+                                <div class="text-muted small">
+                                    {{ medicine.category.name }} | Shelf: {{ medicine.shelf_location }}
+                                </div>
+                                <div class="small text-warning">
+                                    Expires: {{ medicine.expiry_date|date:"Y-m-d" }}
+                                </div>
+                            </div>
+                            <span class="badge bg-warning text-dark rounded-pill">{{ medicine.quantity }}</span>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item">No medicines nearing expiry</li>
+                    {% endfor %}
+                </ul>
+
+                <div class="mt-3 text-center">
+                    <a href="{% url 'alerts' %}" class="btn btn-outline-danger btn-sm">
+                        View All Alerts <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+{{ block.super }}
+<script>
+$(document).ready(function() {
+    // Highlight low stock in tables
+    $('.table').each(function() {
+        $(this).find('td').each(function() {
+            if ($(this).hasClass('text-danger')) {
+                $(this).closest('tr').addClass('table-warning');
+            }
+        });
+    });
+
+    // Initialize tooltips
+    $('[data-bs-toggle="tooltip"]').tooltip();
+});
+</script>
+{% endblock %}

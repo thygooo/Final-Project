@@ -1,0 +1,27 @@
+{% extends 'clinic/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            <h3><i class="bi bi-exclamation-triangle"></i> Delete Category</h3>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete the category <strong>"{{ category.name }}"</strong>?</p>
+            <p class="text-danger">This action cannot be undone.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{% url 'inventory' %}" class="btn btn-secondary me-md-2">
+                        <i class="bi bi-x-circle"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Confirm Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
