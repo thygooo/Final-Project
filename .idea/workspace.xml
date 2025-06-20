@@ -4,33 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b8dbdc11-bf32-4cec-bd06-5c8231789fca" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/pythonProject9.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Norsu_BSC_Clinic/templates/registration/logged_out.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/forms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/static/css/styles.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/alerts.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/base.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/category_confirm_delete.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/category_form.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/category_list.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/category_medicines.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/home.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/inventory.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/manage_requests.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/medicine_form.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/my_requests.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/process_request.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/request_medicine.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/signup.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clinic/urls.py" afterDir="false" />
-    </list>
+    <list default="true" id="b8dbdc11-bf32-4cec-bd06-5c8231789fca" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
