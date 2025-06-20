@@ -19,4 +19,8 @@ urlpatterns = [
     path('categories/add/', views.add_category, name='add_category'),
     path('categories/edit/<int:category_id>/', views.edit_category, name='edit_category'),
     path('categories/delete/<int:category_id>/', views.delete_category, name='delete_category'),
+    path('transactions/', views.transaction_history, name='transaction_history'),
+    path('transactions/export/', views.export_transactions, name='export_transactions'),
+    path('medicine/restock/', views.restock_medicine, name='restock_medicine'),
+    path('process-request/<int:request_id>/<str:action>/', views.process_request_action,  name='process_request_action'),
 ]

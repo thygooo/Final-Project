@@ -96,17 +96,35 @@ footer {
 }
 
 .alert-card {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    border-left: 4px solid transparent;
+    margin-bottom: 0;
 }
 
-.alert-card:hover {
-    transform: translateY(-5px);
+.list-group-item:hover {
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
-/* Table styling */
-.alert-table th {
-    white-space: nowrap;
+/* Low Stock Alert */
+.low-stock-alert {
+    border-left-color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+/* Near Expiry Alert */
+.near-expiry-alert {
+    border-left-color: #ffc107;
+    background-color: rgba(255, 193, 7, 0.05);
+}
+
+/* Badge Styling */
+.badge-low-stock {
+    background-color: #dc3545;
+    color: white;
+}
+
+.badge-near-expiry {
+    background-color: #ffc107;
+    color: #212529;
 }
 
 /* Responsive adjustments */
@@ -131,4 +149,55 @@ footer {
 /* Table styling */
 .medicine-table th {
     background-color: #f8f9fa;
+}
+
+.nav-link .badge {
+    font-size: 0.6rem;
+    padding: 0.25em 0.4em;
+    margin-left: -0.8em;
+    margin-top: -0.5em;
+}
+
+/* Animation for new requests */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.new-request {
+    animation: pulse 1s infinite;
+}
+
+.table-danger {
+    background-color: rgba(220, 53, 69, 0.05) !important;
+    border-left: 3px solid #dc3545;
+}
+
+.table-warning {
+    background-color: rgba(255, 193, 7, 0.05) !important;
+    border-left: 3px solid #ffc107;
+}
+
+/* Icons for alerts */
+.bi-exclamation-triangle-fill {
+    color: #dc3545;
+}
+
+.bi-calendar-exclamation {
+    color: #ffc107;
+}
+
+/* Hover effects */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02) !important;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+    }
 }

@@ -4,7 +4,26 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b8dbdc11-bf32-4cec-bd06-5c8231789fca" name="Changes" comment="" />
+    <list default="true" id="b8dbdc11-bf32-4cec-bd06-5c8231789fca" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/restock_form.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/clinic/templates/clinic/transaction_history.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/clinic/templatetags/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/clinic/templatetags/custom_filters.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Norsu_BSC_Clinic/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/Norsu_BSC_Clinic/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/forms.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/static/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/static/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/templates/clinic/alerts.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/templates/clinic/alerts.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/templates/clinic/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/templates/clinic/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/templates/clinic/category_medicines.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/templates/clinic/category_medicines.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/templates/clinic/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/templates/clinic/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/templates/clinic/inventory.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/templates/clinic/inventory.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/templates/clinic/process_request.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/templates/clinic/process_request.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/templates/clinic/request_medicine.html" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/templates/clinic/request_medicine.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clinic/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/clinic/views.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,6 +32,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "thygooo"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/thygooo/Final-Project.git",
+    "accountId": "01f4815a-45e6-4c20-999f-348b2d871cca"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -25,7 +56,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "main",
     "last_opened_file_path": "C:/Users/Shenna Mae/PycharmProjects/pythonProject9"
   }
 }]]></component>

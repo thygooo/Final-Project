@@ -1,13 +1,15 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from .models import Medicine, MedicineCategory, MedicineRequest, Patient
+from .models import Medicine, MedicineCategory, MedicineRequest, Patient, Transaction
 from .forms import (SignUpForm, MedicineForm, MedicineCategoryForm,
-                    MedicineRequestForm, MedicineRequestProcessForm)
+                    MedicineRequestForm, MedicineRequestProcessForm, RestockForm)
 from django.db.models import Q, F
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.db import models
+from openpyxl import Workbook
 
 
 def is_staff(user):
@@ -114,7 +116,7 @@ def delete_medicine(request, medicine_id):
 
 @login_required
 def request_medicine(request):
-    available_medicines = Medicine.objects.filter(quantity__gt=0)
+    available_medicines = Medicine.objects.filter(quantity__gt=0).order_by('name')
 
     if request.method == 'POST':
         form = MedicineRequestForm(request.POST)
@@ -122,6 +124,16 @@ def request_medicine(request):
             request_obj = form.save(commit=False)
             request_obj.patient = request.user.patient
             request_obj.save()
+
+            Transaction.objects.create(
+                transaction_type='REQUEST',
+                medicine=request_obj.medicine,
+                quantity=request_obj.quantity,
+                user=request.user,
+                patient=request.user.patient,
+                notes=request_obj.notes
+            )
+
             messages.success(request, 'Medicine request submitted successfully!')
             return redirect('my_requests')
     else:
@@ -131,7 +143,6 @@ def request_medicine(request):
         'form': form,
         'available_medicines': available_medicines
     })
-
 
 @login_required
 def my_requests(request):
@@ -145,24 +156,67 @@ def manage_requests(request):
     pending_requests = MedicineRequest.objects.filter(status='pending').order_by('request_date')
     return render(request, 'clinic/manage_requests.html', {'requests': pending_requests})
 
+def base_context(request):
+    if request.user.is_authenticated and request.user.is_staff:
+        pending_count = MedicineRequest.objects.filter(status='pending').count()
+        return {'pending_request_count': pending_count}
+    return {}
+
 
 @login_required
 @user_passes_test(is_staff)
 def process_request(request, request_id):
     medicine_request = get_object_or_404(MedicineRequest, pk=request_id)
+    remaining_stock = medicine_request.medicine.quantity - medicine_request.quantity
+
+    context = {
+        'request': medicine_request,
+        'remaining_stock': remaining_stock,
+        # ... other context ...
+    }
+
     if request.method == 'POST':
         form = MedicineRequestProcessForm(request.POST, instance=medicine_request)
+        action = request.POST.get('action')
+
         if form.is_valid():
-            processed_request = form.save(commit=False)
-            processed_request.processed_by = request.user
-            processed_request.save()
-            messages.success(request, 'Request processed successfully!')
+            if action == 'approve':
+                # Additional stock check (in case someone bypasses the UI)
+                if medicine_request.quantity > medicine_request.medicine.quantity:
+                    messages.error(request, 'Cannot approve - insufficient stock!')
+                    return redirect('manage_requests')
+
+                medicine_request.status = 'approved'
+                medicine_request.medicine.quantity -= medicine_request.quantity
+                medicine_request.medicine.save()
+                messages.success(request, 'Request approved successfully!')
+
+            elif action == 'reject':
+                medicine_request.status = 'rejected'
+                messages.success(request, 'Request rejected.')
+
+            medicine_request.processed_by = request.user
+            medicine_request.processed_date = timezone.now()
+            medicine_request.save()
+
+            # Log transaction
+            Transaction.objects.create(
+                transaction_type=action.upper(),
+                medicine=medicine_request.medicine,
+                quantity=medicine_request.quantity,
+                user=request.user,
+                patient=medicine_request.patient,
+                notes=form.cleaned_data['notes']
+            )
+
             return redirect('manage_requests')
+
     else:
         form = MedicineRequestProcessForm(instance=medicine_request)
+
     return render(request, 'clinic/process_request.html', {
-        'form': form,
         'request': medicine_request,
+        'form': form
     })
 
 @login_required
@@ -220,3 +274,126 @@ def delete_category(request, category_id):
         messages.success(request, 'Category deleted successfully!')
         return redirect('inventory')  # Changed from 'category_list' to 'inventory'
     return render(request, 'clinic/category_confirm_delete.html', {'category': category})
+
+
+@login_required
+def transaction_history(request):
+    transactions = Transaction.objects.all().order_by('-timestamp')
+    return render(request, 'clinic/transaction_history.html', {'transactions': transactions})
+
+
+@login_required
+def export_transactions(request):
+    # Create Excel workbook
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="transactions_{}.xls"'.format(
+        datetime.now().strftime('%Y-%m-%d'))
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Transaction History"
+
+    # Add headers
+    headers = ['Date', 'Type', 'Medicine', 'Category', 'Quantity', 'Staff', 'Patient', 'Notes']
+    ws.append(headers)
+
+    # Add data
+    for t in Transaction.objects.all().order_by('-timestamp'):
+        ws.append([
+            t.timestamp.strftime('%Y-%m-%d %H:%M'),
+            t.get_transaction_type_display(),
+            t.medicine.name if t.medicine else 'N/A',
+            t.medicine.category.name if t.medicine else 'N/A',
+            t.quantity,
+            t.user.get_full_name() if t.user else 'System',
+            t.patient.user.get_full_name() if t.patient else 'N/A',
+            t.notes
+        ])
+
+    wb.save(response)
+    return response
+
+
+@login_required
+@user_passes_test(is_staff)
+def restock_medicine(request):
+    initial = {}
+    medicine_id = request.GET.get('medicine_id')
+    if medicine_id:
+        medicine = get_object_or_404(Medicine, pk=medicine_id)
+        initial['medicine'] = medicine
+    if request.method == 'POST':
+        form = RestockForm(request.POST)
+        if form.is_valid():
+            medicine = form.cleaned_data['medicine']
+            quantity = form.cleaned_data['quantity']
+
+            # Update stock
+            medicine.quantity += quantity
+            medicine.save()
+
+            # Log transaction
+            Transaction.objects.create(
+                transaction_type='RESTOCK',
+                medicine=medicine,
+                quantity=quantity,
+                user=request.user,
+                notes=form.cleaned_data['notes']
+            )
+
+            messages.success(request, f'Successfully added {quantity} items to {medicine.name}')
+            return redirect('inventory')
+    else:
+        form = RestockForm(initial=initial)
+
+    return render(request, 'clinic/restock_form.html', {'form': form})
+
+@login_required
+def restock_history(request):
+    restocks = Transaction.objects.filter(
+        transaction_type='RESTOCK'
+    ).order_by('-timestamp')
+    return render(request, 'clinic/restock_history.html', {'restocks': restocks})
+
+
+@login_required
+@user_passes_test(is_staff)
+def process_request_action(request, request_id, action):
+    medicine_request = get_object_or_404(MedicineRequest, pk=request_id)
+
+    if request.method == 'POST':
+        notes = request.POST.get('notes', '')
+
+        if action == 'approve':
+            medicine_request.status = 'approved'
+            medicine_request.processed_by = request.user
+            medicine_request.processed_date = timezone.now()
+            medicine_request.notes = notes
+
+            # Deduct from inventory
+            medicine_request.medicine.quantity -= medicine_request.quantity
+            medicine_request.medicine.save()
+
+            messages.success(request, 'Request approved successfully!')
+        elif action == 'reject':
+            medicine_request.status = 'rejected'
+            medicine_request.processed_by = request.user
+            medicine_request.processed_date = timezone.now()
+            medicine_request.notes = notes
+            messages.success(request, 'Request rejected.')
+
+        medicine_request.save()
+
+        # Log transaction
+        Transaction.objects.create(
+            transaction_type='APPROVE' if action == 'approve' else 'REJECT',
+            medicine=medicine_request.medicine,
+            quantity=medicine_request.quantity,
+            user=request.user,
+            patient=medicine_request.patient,
+            notes=notes
+        )
+
+        return redirect('manage_requests')
+
+    return redirect('process_request', request_id=request_id)

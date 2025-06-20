@@ -101,3 +101,22 @@ class MedicineRequest(models.Model):
 def create_patient_profile(sender, instance, created, **kwargs):
     if created and not instance.is_staff:
         Patient.objects.create(user=instance, student_id=f"STD-{instance.id}")
+
+class Transaction(models.Model):
+    TRANSACTION_TYPES = [
+        ('REQUEST', 'Medicine Request'),
+        ('APPROVE', 'Request Approved'),
+        ('REJECT', 'Request Rejected'),
+        ('RESTOCK', 'Medicine Restocked'),
+    ]
+
+    transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
+    medicine = models.ForeignKey(Medicine, on_delete=models.SET_NULL, null=True)
+    quantity = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, blank=True)
+    notes = models.TextField(blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.get_transaction_type_display()} - {self.medicine} ({self.timestamp})"

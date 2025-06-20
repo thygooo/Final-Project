@@ -37,11 +37,28 @@ class MedicineRequestForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Only show medicines with quantity > 0
         self.fields['medicine'].queryset = Medicine.objects.filter(quantity__gt=0)
-        self.fields['medicine'].label_from_instance = lambda obj: f"{obj.name} (Available: {obj.quantity})"
+        self.fields['medicine'].label_from_instance = lambda \
+            obj: f"{obj.name} (Available: {obj.quantity}, Shelf: {obj.shelf_location})"
 
 
 class MedicineRequestProcessForm(forms.ModelForm):
     class Meta:
         model = MedicineRequest
-        fields = ['status', 'notes']
+        fields = ['notes']
+
+class RestockForm(forms.Form):
+    medicine = forms.ModelChoiceField(
+        queryset=Medicine.objects.all(),
+        label="Select Medicine"
+    )
+    quantity = forms.IntegerField(
+        min_value=1,
+        label="Quantity to Add"
+    )
+    notes = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 2}),
+        required=False,
+        label="Restock Notes"
+    )

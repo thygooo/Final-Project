@@ -1,0 +1,49 @@
+{% extends 'clinic/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Restock Medicine{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h3 class="card-title">
+                    <i class="bi bi-plus-circle"></i> Restock Medicine
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
+                        <a href="{% url 'inventory' %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Restock
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('#id_medicine').select2({
+        placeholder: "Select a medicine to restock",
+        allowClear: false,
+        width: '100%'
+    });
+});
+$('#id_medicine').change(function() {
+    const medicineId = $(this).val();
+    if (medicineId) {
+    }
+});
+</script>
+{% endblock %}
